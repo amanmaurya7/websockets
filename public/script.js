@@ -1,30 +1,16 @@
-// script.js
-const logContainer = document.getElementById('log-container');
+// public/script.js
+const logContent = document.getElementById('log-content');
 
-// URL mein 'http' ko 'ws' se replace karna hai
-const wsUrl = `ws://${window.location.host}`;
-const socket = new WebSocket(wsUrl);
+// Connect to the WebSocket server we just made
+const socket = new WebSocket(`ws://${window.location.host}`);
 
-socket.onopen = () => {
-    console.log('WebSocket connection established');
-};
-
-// Yeh function tab chalega jab server se koi message aayega
+// This runs every time the server sends us a message
 socket.onmessage = (event) => {
-    // event.data mein server ka bheja hua text hota hai
-    const logData = event.data;
-    logContainer.textContent += logData + '\n'; // Naye data ko container mein jod do
-
-    // Automatically scroll to the bottom
+    // Just add the new text to our page
+    logContent.textContent += event.data + '\n';
+    // And scroll to the bottom to see the latest
     window.scrollTo(0, document.body.scrollHeight);
 };
 
-socket.onerror = (error) => {
-    console.error('WebSocket Error:', error);
-    logContainer.textContent += 'Error connecting to the server.\n';
-};
-
-socket.onclose = () => {
-    console.log('WebSocket connection closed');
-    logContainer.textContent += 'Connection closed.\n';
-};
+socket.onopen = () => console.log('Connected to log server!');
+socket.onclose = () => console.log('Disconnected from log server.');
